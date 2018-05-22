@@ -50,8 +50,21 @@
       $('#tasks').on('click', '.notification', function () {
         // Toggle completed true/false
         const id = $(this).data('id');
-        tasks[id].completed = !tasks[id].completed
+        tasks[id].completed = !tasks[id].completed;
 
+        renderTasks();
+        saveTasks();
+      });
+
+      $('#tasks').on('click', '.remove', function (event) {
+        // Don't trigger status change
+        event.stopPropagation();
+
+        // Remove it from our array
+        const id = $(this).parent().data('id');
+        tasks.splice(id, 1);
+
+        // Update the view
         renderTasks();
         saveTasks();
       });
@@ -59,7 +72,7 @@
       addTask = (index) => {
         const task = tasks[index];
         // Create a task and add it to #tasks
-        $('#tasks').prepend($(`<div class="notification ${task.completed ? 'is-primary' : ''}" data-id="${index}">${task.item}</div>`));
+        $('#tasks').prepend($(`<div class="notification ${task.completed ? 'is-primary' : ''}" data-id="${index}">${task.item} <button class="remove">Remove!</button></div>`));
 
         // Update our h1 with the total number of tasks
         $('h1').text($('#tasks div').length);
@@ -86,7 +99,7 @@
       }
 
       // Load tasks!
-      renderTasks()
+      renderTasks();
 
     });
 
