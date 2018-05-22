@@ -17,6 +17,9 @@
       <div class="level-item">
         <a class="button" id="mark-all-complete">Mark All Complete</a>
       </div>
+      <div class="level-item">
+        <a class="button" id="mark-all-incomplete">Mark All Incomplete</a>
+      </div>
     </nav>
 
     <form>
@@ -81,6 +84,13 @@
       $('#mark-all-complete').click(function() {
         for (let index in tasks) {
           tasks[index].completed = true;
+        }
+        renderTasks();
+      })
+
+      $('#mark-all-incomplete').click(function() {
+        for (let index in tasks) {
+          tasks[index].completed = false;
         }
         renderTasks();
       })
