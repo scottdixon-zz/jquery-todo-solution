@@ -47,7 +47,13 @@
       });
 
       // On task click
-      $('#tasks').on('click', '.notification', function () {
+      $('#tasks').on('click', '.notification', function (e) {
+
+        // Check for cmd/cntrl click
+        if (e.metaKey) {
+          return $(this).find('.remove').trigger('click');
+        }
+
         // Toggle completed true/false
         const id = $(this).data('id');
         tasks[id].completed = !tasks[id].completed;
