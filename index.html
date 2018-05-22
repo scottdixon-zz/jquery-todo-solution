@@ -14,6 +14,9 @@
           <h1 class="title is-1">0</h1>
         </div>
       </div>
+      <div class="level-item">
+        <a class="button" id="mark-all-complete">Mark All Complete</a>
+      </div>
     </nav>
 
     <form>
@@ -74,6 +77,13 @@
         renderTasks();
         saveTasks();
       });
+
+      $('#mark-all-complete').click(function() {
+        for (let index in tasks) {
+          tasks[index].completed = true;
+        }
+        renderTasks();
+      })
 
       addTask = (index) => {
         const task = tasks[index];
