@@ -37,13 +37,10 @@
         // Prevent the browser from handling the form
         event.preventDefault();
 
-        // Run the addTask function, pass it the current text in the input
-        const task = $('form input').val()
-        addTask(task);
-
         // Add the task to our array and update local storage!
-        tasks.push(task);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
+        tasks.push({ item: $('form input').val(), completed: false });
+        saveTasks();
+        renderTasks();
 
         // Set the input value back to empty after we add a task
         $('form input').val('');
@@ -51,18 +48,18 @@
 
       // On task click
       $('#tasks').on('click', '.notification', function () {
-        // Mark task as complete
-        // Note we're not using arrow function syntax for our callback because we want to preserve 'this'.
-        // In this context, 'this' refers to the notification that has been clicked.
-        $(this).toggleClass('is-primary');
+        // Toggle completed true/false
+        const id = $(this).data('id');
+        tasks[id].completed = !tasks[id].completed
 
-        // Update progress bar
-        updateProgress();
+        renderTasks();
+        saveTasks();
       });
 
-      addTask = (task) => {
+      addTask = (index) => {
+        const task = tasks[index];
         // Create a task and add it to #tasks
-        $('#tasks').prepend($(`<div class="notification">${task}</div>`));
+        $('#tasks').prepend($(`<div class="notification ${task.completed ? 'is-primary' : ''}" data-id="${index}">${task.item}</div>`));
 
         // Update our h1 with the total number of tasks
         $('h1').text($('#tasks div').length);
@@ -75,10 +72,22 @@
         $('progress').val((completedTasks/totalTasks) * 100);
       }
 
-      // Load any existing tasks
-      for (const task of tasks) {
-        addTask(task)
+      // Refresh tasks
+      renderTasks = () => {
+        $('#tasks').html('');
+        for (const index in tasks) {
+          addTask(index)
+        }
+        updateProgress()
       }
+
+      saveTasks = () => {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      }
+
+      // Load tasks!
+      renderTasks()
+
     });
 
     </script>
