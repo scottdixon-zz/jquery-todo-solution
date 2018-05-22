@@ -15,10 +15,10 @@
         </div>
       </div>
       <div class="level-item">
-        <a class="button" id="mark-all-complete">Mark All Complete</a>
+        <a class="button" data-mark="complete">Mark All Complete</a>
       </div>
       <div class="level-item">
-        <a class="button" id="mark-all-incomplete">Mark All Incomplete</a>
+        <a class="button" data-mark="incomplete">Mark All Incomplete</a>
       </div>
       <div class="level-item">
         <a class="button" id="remove-all">Remove All Tasks</a>
@@ -48,8 +48,7 @@
 
         // Add the task to our array and update local storage!
         tasks.push({ item: $('form input').val(), completed: false });
-        saveTasks();
-        renderTasks();
+        renderAndSaveTasks();
 
         // Set the input value back to empty after we add a task
         $('form input').val('');
@@ -67,8 +66,7 @@
         const id = $(this).data('id');
         tasks[id].completed = !tasks[id].completed;
 
-        renderTasks();
-        saveTasks();
+        renderAndSaveTasks();
       });
 
       $('#tasks').on('click', '.remove', function (event) {
@@ -80,32 +78,21 @@
         tasks.splice(id, 1);
 
         // Update the view
-        renderTasks();
-        saveTasks();
+        renderAndSaveTasks();
       });
 
-      $('#mark-all-complete').click(function() {
+      $('nav').on('click', '[data-mark]', function() {
         for (let index in tasks) {
-          tasks[index].completed = true;
+          tasks[index].completed = $(this).data('mark') == "complete";
         }
-        renderTasks();
-        saveTasks();
-      })
-
-      $('#mark-all-incomplete').click(function() {
-        for (let index in tasks) {
-          tasks[index].completed = false;
-        }
-        renderTasks();
-        saveTasks();
+        renderAndSaveTasks();
       })
 
       $('#remove-all').click(function() {
         if (confirm('Are you sure?')) {
           tasks = [];
         }
-        renderTasks();
-        saveTasks();
+        renderAndSaveTasks();
       })
 
       addTask = (index) => {
@@ -124,24 +111,22 @@
       }
 
       // Refresh tasks
-      renderTasks = () => {
+      renderAndSaveTasks = () => {
         $('#tasks').html('');
         for (const index in tasks) {
           addTask(index)
         }
-        updateProgress()
+        updateProgress();
+        saveTasks();
       }
 
       saveTasks = () => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
       }
 
-      // Load tasks!
-      renderTasks();
-
+      // Load stored tasks!
+      renderAndSaveTasks();
     });
-
     </script>
-
   </body>
 </html>
