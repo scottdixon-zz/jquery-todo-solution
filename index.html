@@ -20,6 +20,9 @@
       <div class="level-item">
         <a class="button" id="mark-all-incomplete">Mark All Incomplete</a>
       </div>
+      <div class="level-item">
+        <a class="button" id="remove-all">Remove All Tasks</a>
+      </div>
     </nav>
 
     <form>
@@ -36,7 +39,7 @@
     // Wait for the page to be ready before running our JS
     $(document).ready(() => {
       // Load the tasks from local storage if they exist
-      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
       // Listen for form submission
       $('form').submit((event) => {
@@ -86,6 +89,7 @@
           tasks[index].completed = true;
         }
         renderTasks();
+        saveTasks();
       })
 
       $('#mark-all-incomplete').click(function() {
@@ -93,22 +97,30 @@
           tasks[index].completed = false;
         }
         renderTasks();
+        saveTasks();
+      })
+
+      $('#remove-all').click(function() {
+        if (confirm('Are you sure?')) {
+          tasks = [];
+        }
+        renderTasks();
+        saveTasks();
       })
 
       addTask = (index) => {
         const task = tasks[index];
         // Create a task and add it to #tasks
         $('#tasks').prepend($(`<div class="notification ${task.completed ? 'is-primary' : ''}" data-id="${index}">${task.item} <button class="remove">Remove!</button></div>`));
-
-        // Update our h1 with the total number of tasks
-        $('h1').text($('#tasks div').length);
       }
 
       // Update progress bar
       updateProgress = () => {
         const totalTasks = $('#tasks div').length;
         const completedTasks = $('#tasks div.notification.is-primary').length;
-        $('progress').val((completedTasks/totalTasks) * 100);
+        $('progress').val(totalTasks ? (completedTasks/totalTasks) * 100 : 0);
+        // Update our h1 with the total number of tasks
+        $('h1').text(tasks.length);
       }
 
       // Refresh tasks
