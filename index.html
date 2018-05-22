@@ -26,12 +26,11 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
-    //
-    // Dollar $ign means jQuery :)
-    //
 
     // Wait for the page to be ready before running our JS
     $(document).ready(() => {
+      // Load the tasks from local storage if they exist
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
       // Listen for form submission
       $('form').submit((event) => {
@@ -39,7 +38,12 @@
         event.preventDefault();
 
         // Run the addTask function, pass it the current text in the input
-        addTask($('form input').val());
+        const task = $('form input').val()
+        addTask(task);
+
+        // Add the task to our array and update local storage!
+        tasks.push(task);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
 
         // Set the input value back to empty after we add a task
         $('form input').val('');
@@ -69,6 +73,11 @@
         const totalTasks = $('#tasks div').length;
         const completedTasks = $('#tasks div.notification.is-primary').length;
         $('progress').val((completedTasks/totalTasks) * 100);
+      }
+
+      // Load any existing tasks
+      for (const task of tasks) {
+        addTask(task)
       }
     });
 
